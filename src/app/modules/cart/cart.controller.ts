@@ -1,11 +1,14 @@
-import { Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status-codes';
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { CartService } from './cart.service';
+import { JwtPayload } from 'jsonwebtoken';
 
-const getCart = catchAsync(async (req: Request, res: Response) => {
-    const result = await CartService.getCart(req.user.userId);
+const getCart = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await CartService.getCart(decodedToken.userId);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -15,9 +18,10 @@ const getCart = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const addToCart = catchAsync(async (req: Request, res: Response) => {
+const addToCart = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { productId, variant, quantity } = req.body;
-    const result = await CartService.addToCart(req.user.userId, productId, variant, quantity);
+    const decodedToken = req.user as JwtPayload
+    const result = await CartService.addToCart(decodedToken.userId, productId, variant, quantity);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -27,9 +31,10 @@ const addToCart = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const updateCartItem = catchAsync(async (req: Request, res: Response) => {
+const updateCartItem = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { quantity } = req.body;
-    const result = await CartService.updateCartItem(req.user.userId, req.params.itemId, quantity);
+    const decodedToken = req.user as JwtPayload
+    const result = await CartService.updateCartItem(decodedToken.userId, req.params.itemId, quantity);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -39,8 +44,9 @@ const updateCartItem = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const removeFromCart = catchAsync(async (req: Request, res: Response) => {
-    const result = await CartService.removeFromCart(req.user.userId, req.params.itemId);
+const removeFromCart = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await CartService.removeFromCart(decodedToken.userId, req.params.itemId);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -50,8 +56,9 @@ const removeFromCart = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const clearCart = catchAsync(async (req: Request, res: Response) => {
-    const result = await CartService.clearCart(req.user.userId);
+const clearCart = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await CartService.clearCart(decodedToken.userId);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,

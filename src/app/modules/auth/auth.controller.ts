@@ -15,7 +15,7 @@ import { AuthServices } from "./auth.service";
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate("local", async (error: any, user: any, info: any) => {
         if (error) {
-            return next(new AppError(401, error))
+            return next(new AppError(401, error))            
         }
         if (!user) {
             return next(new AppError(401, info.message))
@@ -99,19 +99,7 @@ const logOut = catchAsync(async (req: Request, res: Response, next: NextFunction
     });
 });
 
-const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const oldPassword = req.body.oldPassword;
-    const newPassword = req.body.newPassword;
-    const decodedToken = req.user
-    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload)
 
-    sendResponse(res, {
-        statusCode: httpStatus.OK,
-        success: true,
-        message: "Reset Password Successfully",
-        data: null
-    })
-})
 const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     let redirectTo = req.query.state ? req.query.state as string : ""
 
@@ -137,6 +125,5 @@ export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logOut,
-    resetPassword,
     googleCallbackController
 }

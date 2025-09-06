@@ -1,11 +1,14 @@
-import { Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status-codes';
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { OrderService } from './order.service';
+import { JwtPayload } from 'jsonwebtoken';
 
-const createOrder = catchAsync(async (req: Request, res: Response) => {
-    const result = await OrderService.createOrder(req.user.userId, req.body);
+const createOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await OrderService.createOrder(decodedToken.userId, req.body);
     
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
@@ -15,8 +18,9 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getMyOrders = catchAsync(async (req: Request, res: Response) => {
-    const result = await OrderService.getMyOrders(req.user.userId, req.query);
+const getMyOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await OrderService.getMyOrders(decodedToken.userId, req.query);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -27,7 +31,7 @@ const getMyOrders = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getAllOrders = catchAsync(async (req: Request, res: Response) => {
+const getAllOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await OrderService.getAllOrders(req.query);
     
     sendResponse(res, {
@@ -39,7 +43,7 @@ const getAllOrders = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const updateOrderStatus = catchAsync(async (req: Request, res: Response) => {
+const updateOrderStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await OrderService.updateOrderStatus(req.params.id, req.body);
     
     sendResponse(res, {

@@ -24,13 +24,13 @@ router.get(
 // Admin routes
 router.get(
     '/',
-    checkAuth(Role.ADMIN),
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     OrderController.getAllOrders
 );
 
 router.patch(
     '/:id/status',
-    checkAuth(Role.ADMIN),
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     validateRequest(updateOrderStatusValidationSchema),
     OrderController.updateOrderStatus
 );

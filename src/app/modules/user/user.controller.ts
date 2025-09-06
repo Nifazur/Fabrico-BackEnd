@@ -1,11 +1,25 @@
-import { Request, Response } from 'express';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status-codes';
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { UserService } from './user.service';
+import { JwtPayload } from 'jsonwebtoken';
 
-const getMe = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.getMe(req.user.userId);
+
+const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const user = await UserService.createUser(req.body)
+    sendResponse(res, {
+        statusCode: httpStatus.CREATED,
+        success: true,
+        message: "User Created Successfully",
+        data: user
+    })
+})
+
+const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload    
+    const result = await UserService.getMe(decodedToken.userId);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -15,8 +29,9 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const updateMe = catchAsync(async (req: Request, res: Response) => {
-    const result = await UserService.updateMe(req.user.userId, req.body);
+const updateMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const decodedToken = req.user as JwtPayload
+    const result = await UserService.updateMe(decodedToken.userId, req.body);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -26,7 +41,7 @@ const updateMe = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+const getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await UserService.getAllUsers(req.query);
     
     sendResponse(res, {
@@ -38,7 +53,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const deleteUser = catchAsync(async (req: Request, res: Response) => {
+const deleteUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await UserService.deleteUser(req.params.id);
     
     sendResponse(res, {
@@ -49,9 +64,10 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const changePassword = catchAsync(async (req: Request, res: Response) => {
+const changePassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { oldPassword, newPassword } = req.body;
-    const result = await UserService.changePassword(req.user.userId, oldPassword, newPassword);
+    const decodedToken = req.user as JwtPayload
+    const result = await UserService.changePassword(decodedToken.userId, oldPassword, newPassword);
     
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -62,6 +78,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const UserController = {
+    createUser,
     getMe,
     updateMe,
     getAllUsers,

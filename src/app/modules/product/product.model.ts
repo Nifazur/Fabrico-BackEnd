@@ -30,8 +30,8 @@ const productSchema = new Schema<IProduct>({
     },
     slug: {
         type: String,
-        required: true,
         unique: true,
+        required: true,
         lowercase: true
     },
     description: {
@@ -85,18 +85,5 @@ const productSchema = new Schema<IProduct>({
     timestamps: true
 });
 
-// Calculate total stock before saving
-productSchema.pre('save', function(next) {
-    this.totalStock = this.variants.reduce((total, variant) => total + variant.stock, 0);
-    next();
-});
-
-// Generate slug from name
-productSchema.pre('save', function(next) {
-    if (!this.slug && this.name) {
-        this.slug = this.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    }
-    next();
-});
 
 export const Product = model<IProduct>('Product', productSchema);

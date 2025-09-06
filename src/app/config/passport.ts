@@ -8,14 +8,15 @@ import { Role } from "../modules/user/user.interface";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcryptjs from 'bcryptjs'
 
-// Local Strategy (unchanged)
+// Fixed Local Strategy - Added password selection
 passport.use(
     new LocalStrategy({
         usernameField: "email",
         passwordField: "password"
     }, async (email: string, password: string, done) => {
         try {
-            const isUserExist = await User.findOne({ email })
+            // ✅ Important: Select password field explicitly since it's excluded by default
+            const isUserExist = await User.findOne({ email }).select('+password')            
 
             if (!isUserExist) {
                 return done(null, false, { message: "User does not exist" });
@@ -27,7 +28,12 @@ passport.use(
                 return done(null, false, { message: "You have authenticated through Google. Please login with Google and set a password first." });
             }
 
-            const isPasswordMatched = await bcryptjs.compare(password as string, isUserExist.password as string)
+            // ✅ Check if password exists before comparing
+            if (!isUserExist.password) {
+                return done(null, false, { message: "Password not set. Please use Google login or contact admin." });
+            }
+
+            const isPasswordMatched = await bcryptjs.compare(password, isUserExist.password)
 
             if (!isPasswordMatched) {
                 return done(null, false, { message: "Password does not match" });
@@ -76,7 +82,7 @@ passport.use(
                         email,
                         name: profile.displayName,
                         picture: profile.photos?.[0].value,
-                        role: Role.USER,
+                        role: [Role.USER], // ✅ Fixed: role should be an array
                         isVerified: true,
                         auths: [
                             {

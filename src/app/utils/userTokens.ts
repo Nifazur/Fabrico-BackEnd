@@ -39,7 +39,8 @@ export const createNewAccessTokenWithRefreshToken = async (refreshToken: string)
         email: isUserExist.email,
         role: isUserExist.role
     }
-    const accessToken = generateToken(JwtPayload, envVars.JWT_ACCESS_SECRET, envVars.JWT_REFRESH_EXPIRES)
+    // FIX: Use JWT_ACCESS_EXPIRES instead of JWT_REFRESH_EXPIRES
+    const accessToken = generateToken(JwtPayload, envVars.JWT_ACCESS_SECRET, envVars.JWT_ACCESS_EXPIRES)
 
     return accessToken
 }

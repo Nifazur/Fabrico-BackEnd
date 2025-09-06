@@ -48,12 +48,13 @@ const addToCart = async (userId: string, productId: string, variant: any, quanti
     if (existingItemIndex > -1) {
         cart.items[existingItemIndex].quantity += quantity;
     } else {
+        // Don't include _id when pushing new items
         cart.items.push({
             product: new Types.ObjectId(productId),
             variant,
             quantity,
             price: product.price
-        });
+        } as any); // Cast to any to avoid _id requirement
     }
     
     await cart.save();

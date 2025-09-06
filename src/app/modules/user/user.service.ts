@@ -1,9 +1,24 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status-codes';
 import bcryptjs from 'bcryptjs';
 import AppError from '../../errorHelpers/AppError';
 import { User } from './user.model';
-import { IUser } from './user.interface';
+import { IAuthProvider, IUser, Role } from './user.interface';
 import { envVars } from '../../config/env';
+
+const createUser = async (payload: Partial<IUser>) => {
+    const { email, password, ...rest } = payload;
+    const authProvider: IAuthProvider = { provider: "credentials", providerId: email as string }
+    const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
+    const user = await User.create({
+        email,
+        password: hashedPassword,
+        role: rest.role || [Role.USER],
+        auths: [authProvider],
+        ...rest
+    })
+    return user
+}
 
 const getMe = async (userId: string) => {
     const user = await User.findById(userId).select('-password');
@@ -107,6 +122,7 @@ const changePassword = async (userId: string, oldPassword: string, newPassword: 
 };
 
 export const UserService = {
+    createUser,
     getMe,
     updateMe,
     getAllUsers,

@@ -2,10 +2,13 @@ import { Router } from 'express';
 import { checkAuth } from '../../middlewares/checkAuth';
 import { validateRequest } from '../../middlewares/validateRequest';
 import { UserController } from './user.controller';
-import { updateProfileValidationSchema, changePasswordValidationSchema } from './user.validation';
+import { updateProfileValidationSchema, changePasswordValidationSchema, createUserZodSchema } from './user.validation';
 import { Role } from './user.interface';
 
 const router = Router();
+
+// User create
+router.post("/register", validateRequest(createUserZodSchema), UserController.createUser)
 
 // User routes
 router.get('/me', checkAuth(Role.USER), UserController.getMe);
@@ -23,7 +26,7 @@ router.patch(
 );
 
 // Admin routes
-router.get('/', checkAuth(Role.ADMIN), UserController.getAllUsers);
-router.delete('/:id', checkAuth(Role.ADMIN), UserController.deleteUser);
+router.get('/', checkAuth(Role.ADMIN, Role.SUPER_ADMIN), UserController.getAllUsers);
+router.delete('/:id', checkAuth(Role.ADMIN, Role.SUPER_ADMIN), UserController.deleteUser);
 
 export const UserRoutes = router;

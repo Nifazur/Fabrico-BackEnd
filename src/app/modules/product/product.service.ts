@@ -3,16 +3,24 @@ import httpStatus from 'http-status-codes';
 import AppError from '../../errorHelpers/AppError';
 import { Product } from './product.model';
 import { IProduct, IProductQuery } from './product.interface';
+import slugify from 'slugify'
 
 const createProduct = async (payload: IProduct) => {
-    const existingProduct = await Product.findOne({ slug: payload.slug });
-    
-    if (existingProduct) {
-        throw new AppError(httpStatus.CONFLICT, "Product with this slug already exists");
-    }
-    
-    const product = await Product.create(payload);
-    return product;
+
+  if (!payload.slug && payload.name) {
+    payload.slug = slugify(payload.name, { lower: true, strict: true });
+  }
+
+  if (!payload.slug) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Slug is required");
+  }
+  const existingProduct = await Product.findOne({ slug: payload.slug });
+  if (existingProduct) {
+    throw new AppError(httpStatus.CONFLICT, "Product with this slug already exists");
+  }
+
+  const product = await Product.create(payload);
+  return product;
 };
 
 const getAllProducts = async (query: IProductQuery) => {

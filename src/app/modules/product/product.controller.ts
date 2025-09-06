@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status-codes';
 import { catchAsync } from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import { ProductService } from './product.service';
 
-const createProduct = catchAsync(async (req: Request, res: Response) => {
+const createProduct = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await ProductService.createProduct(req.body);
     
     sendResponse(res, {
@@ -16,7 +17,7 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getAllProducts = catchAsync(async (req: Request, res: Response) => {
+const getAllProducts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await ProductService.getAllProducts(req.query as any);
     
     sendResponse(res, {
@@ -28,7 +29,7 @@ const getAllProducts = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const getProductBySlug = catchAsync(async (req: Request, res: Response) => {
+const getProductBySlug = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await ProductService.getProductBySlug(req.params.slug);
     
     sendResponse(res, {
@@ -39,7 +40,7 @@ const getProductBySlug = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const updateProduct = catchAsync(async (req: Request, res: Response) => {
+const updateProduct = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await ProductService.updateProduct(req.params.slug, req.body);
     
     sendResponse(res, {
@@ -50,7 +51,7 @@ const updateProduct = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-const deleteProduct = catchAsync(async (req: Request, res: Response) => {
+const deleteProduct = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await ProductService.deleteProduct(req.params.slug);
     
     sendResponse(res, {

@@ -14,21 +14,21 @@ router.get('/:slug', ProductController.getProductBySlug);
 // Admin routes
 router.post(
     '/',
-    checkAuth(Role.ADMIN),
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     validateRequest(createProductValidationSchema),
     ProductController.createProduct
 );
 
 router.patch(
     '/:slug',
-    checkAuth(Role.ADMIN),
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     validateRequest(updateProductValidationSchema),
     ProductController.updateProduct
 );
 
 router.delete(
     '/:slug',
-    checkAuth(Role.ADMIN),
+    checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     ProductController.deleteProduct
 );
 
