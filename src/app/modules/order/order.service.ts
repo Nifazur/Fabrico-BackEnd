@@ -108,6 +108,16 @@ const getMyOrders = async (userId: string, query: any) => {
     };
 };
 
+const getOrderById = async (orderNumber: string) => {
+    const product = await Product.findOne({ orderNumber, isActive: true });
+    
+    if (!product) {
+        throw new AppError(httpStatus.NOT_FOUND, "Product not found");
+    }
+    
+    return product;
+};
+
 const getAllOrders = async (query: any) => {
     const { page = 1, limit = 10, status, paymentStatus } = query;
 
@@ -182,6 +192,7 @@ const updateOrderStatus = async (orderId: string, updateData: any) => {
 
 export const OrderService = {
     createOrder,
+    getOrderById,
     getMyOrders,
     getAllOrders,
     updateOrderStatus

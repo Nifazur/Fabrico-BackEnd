@@ -15,6 +15,8 @@ router.post(
     OrderController.createOrder
 );
 
+router.get('/:oderId', OrderController.getOrderById);
+
 router.get(
     '/me',
     checkAuth(Role.USER),
