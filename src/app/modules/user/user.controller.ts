@@ -18,7 +18,7 @@ const createUser = catchAsync(async (req: Request, res: Response, next: NextFunc
 })
 
 const getMe = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const decodedToken = req.user as JwtPayload    
+    const decodedToken = req.user as JwtPayload
     const result = await UserService.getMe(decodedToken.userId);
     
     sendResponse(res, {

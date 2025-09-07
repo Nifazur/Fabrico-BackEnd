@@ -11,16 +11,16 @@ const router = Router();
 router.post("/register", validateRequest(createUserZodSchema), UserController.createUser)
 
 // User routes
-router.get('/me', checkAuth(Role.USER), UserController.getMe);
+router.get('/me', checkAuth(...Object.values(Role)), UserController.getMe);
 router.patch(
     '/me',
-    checkAuth(Role.USER),
+    checkAuth(...Object.values(Role)),
     validateRequest(updateProfileValidationSchema),
     UserController.updateMe
 );
 router.patch(
     '/change-password',
-    checkAuth(Role.USER),
+    checkAuth(...Object.values(Role)),
     validateRequest(changePasswordValidationSchema),
     UserController.changePassword
 );
