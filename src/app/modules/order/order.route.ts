@@ -15,13 +15,15 @@ router.post(
     OrderController.createOrder
 );
 
-router.get('/:oderId', OrderController.getOrderById);
-
 router.get(
     '/me',
     checkAuth(Role.USER),
     OrderController.getMyOrders
 );
+
+router.get('/:orderNumber', OrderController.getOrderById);
+
+
 
 // Admin routes
 router.get(

@@ -33,6 +33,7 @@ const getAllProducts = async (query: IProductQuery) => {
         minPrice,
         maxPrice,
         brand,
+        gender,
         sort = '-createdAt',
         page = 1,
         limit = 12
@@ -51,6 +52,7 @@ const getAllProducts = async (query: IProductQuery) => {
     if (category) filter.category = category;
     if (subcategory) filter.subcategory = subcategory;
     if (brand) filter.brand = brand;
+    if (gender) filter.gender = gender;
     
     if (size) {
         filter['variants.size'] = size;

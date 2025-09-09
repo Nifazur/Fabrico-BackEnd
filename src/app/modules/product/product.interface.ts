@@ -5,6 +5,8 @@ export interface IProductVariant {
     sku: string;
 }
 
+export type Gender = "men" | "women" | "unisex";
+
 export interface IProduct {
     _id?: string;
     name: string;
@@ -12,6 +14,7 @@ export interface IProduct {
     description: string;
     category: string;
     subcategory?: string;
+    gender?: Gender;
     brand?: string;
     price: number;
     comparePrice?: number;
@@ -39,4 +42,5 @@ export interface IProductQuery {
     sort?: string;
     page?: number;
     limit?: number;
+    gender?: "male" | "female" | "unisex";
 }

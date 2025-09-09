@@ -80,9 +80,23 @@ const productSchema = new Schema<IProduct>({
     numReviews: {
         type: Number,
         default: 0
+    },
+    gender: {
+        type: String,
+        enum: ["male", "female", "unisex"],
+        default: "unisex"
     }
 }, {
     timestamps: true
+});
+
+productSchema.pre('save', function(next) {
+    if (this.isModified('variants')) {
+        this.totalStock = this.variants.reduce((total, variant) => {
+            return total + variant.stock;
+        }, 0);
+    }
+    next(); 
 });
 
 

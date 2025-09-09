@@ -81,6 +81,7 @@ const createOrder = async (userId: string, orderData: Partial<IOrder>) => {
     return order;
 };
 
+// OrderService
 const getMyOrders = async (userId: string, query: any) => {
     const { page = 1, limit = 10, status } = query;
 
@@ -90,7 +91,7 @@ const getMyOrders = async (userId: string, query: any) => {
     const skip = (page - 1) * limit;
 
     const orders = await Order.find(filter)
-        .populate('items.product', 'name images slug')
+        .populate('items.product', 'name images slug price')
         .skip(skip)
         .limit(limit)
         .sort('-createdAt');
@@ -98,7 +99,7 @@ const getMyOrders = async (userId: string, query: any) => {
     const total = await Order.countDocuments(filter);
 
     return {
-        orders,
+        orders, // ⬅️ ensure this is array
         meta: {
             total,
             page,
@@ -109,13 +110,13 @@ const getMyOrders = async (userId: string, query: any) => {
 };
 
 const getOrderById = async (orderNumber: string) => {
-    const product = await Product.findOne({ orderNumber, isActive: true });
-    
-    if (!product) {
-        throw new AppError(httpStatus.NOT_FOUND, "Product not found");
+    const order = await Order.findOne({ orderNumber });
+
+    if (!order) {
+        throw new AppError(httpStatus.NOT_FOUND, "Order not found");
     }
-    
-    return product;
+
+    return order;
 };
 
 const getAllOrders = async (query: any) => {

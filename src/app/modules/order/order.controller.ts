@@ -20,24 +20,25 @@ const createOrder = catchAsync(async (req: Request, res: Response, next: NextFun
 
 const getOrderById = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const result = await OrderService.getOrderById(req.params.orderNumber);
-    
+
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: "Oder retrieved successfully",
+        message: "Order retrieved successfully",
         data: result
     });
 });
 
+
 const getMyOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const decodedToken = req.user as JwtPayload
+    const decodedToken = req.user as JwtPayload;
     const result = await OrderService.getMyOrders(decodedToken.userId, req.query);
-    
+
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
         message: "Orders retrieved successfully",
-        data: result.orders,
+        data: result.orders, // array of orders
         meta: result.meta
     });
 });
